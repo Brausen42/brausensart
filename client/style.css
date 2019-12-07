@@ -4,7 +4,7 @@
 }
 
 body {
-    background-image: url("pic.jpg");
+    background-image: url("./assets/pic.jpg");
     background-repeat: no-repeat;
     background-size: cover;
     color: white;
