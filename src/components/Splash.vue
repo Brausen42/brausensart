@@ -1,7 +1,11 @@
 <template>
   <div>
-    <circ id="viewport" v-bind:size="400" v-bind:style="viewportStyle">
-      <div id="title">
+    <circ id="viewport" 
+      v-bind:size="focused ? 800 : 400" 
+      v-bind:style="viewportStyle"
+      @mouseenter.native="focused = true"
+      @mouseleave.native="focused = false">
+      <div id="title" v-bind:style="titleStyle">
         <img id="logo" alt="Just Keep Brausen logo" src="../assets/justkeepbrausen.jpg">
         <h1>{{ msg }}</h1>
       </div>
@@ -45,18 +49,31 @@ export default Vue.extend({
     distanceDir: 10,
     content,
     publicPath: process.env.BASE_URL,
-    center: getWindowDimensions() as Coordinate2D
+    center: getWindowDimensions() as Coordinate2D,
+    focused: false
   }),
   computed: {
     viewportStyle: function() {
       const addUnit = (num: number) => `${num}px`
-      return {
+      const style = {
         top: addUnit(this.center.y),
         left: addUnit(this.center.x),
         background: this.activeSrc ? 
-          `no-repeat center/100% url(${this.publicPath}content/${this.activeSrc})`:
-          null
+          `no-repeat center url(${this.publicPath}content/${this.activeSrc})`:
+          null,
+        backgroundSize: '800px'
+      } as CSSStyleDeclaration
+      if (this.focused) {
+        style.borderRadius = '10px'
       }
+      
+      return style
+    },
+    titleStyle: function() {
+      return this.focused ? {
+        opacity: '0.0',
+        visibility: 'hidden'
+      } : {}
     }
   },
   props: {
@@ -121,10 +138,13 @@ export default Vue.extend({
     margin-left 5px
     margin-right 5px
   }
+  transition opacity 0.5s
 }
 
 #viewport {
   position: absolute
   transform: translate(-50%, -50%)
+  transition width 0.5s, height 0.5s
+  z-index 10
 }
 </style>

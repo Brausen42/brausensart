@@ -25,5 +25,15 @@ html, body
   -moz-osx-font-smoothing grayscale
   text-align center
   color #2c3e50
-  background radial-gradient(transparent, slategray)
+  background url(/content/background.jpg) center center
+
+#app:before
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background radial-gradient(white, transparent)
+  opacity 1.0
 </style>
