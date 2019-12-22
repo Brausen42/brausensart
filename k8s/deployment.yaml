@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: brausensart
-        image: brausen42/brausensart:v1.0.2
+        image: brausen42/brausensart:v1.1.0
         imagePullPolicy: Always
         ports:
         - containerPort: 8080

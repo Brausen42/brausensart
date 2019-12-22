@@ -10,9 +10,6 @@ import Splash from '@/components/Splash.vue'
 
 export default {
   name: 'home',
-  data: () => ({
-
-  }),
   components: {
     Splash
   }

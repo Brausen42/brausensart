@@ -1,10 +1,12 @@
 <template>
   <div>
     <circ id="viewport" 
-      v-bind:size="focused ? 800 : 400" 
+      v-bind:size="expanded ? 800 : 400" 
       v-bind:style="viewportStyle"
       @mouseenter.native="focused = true"
-      @mouseleave.native="focused = false">
+      @mouseleave.native="focused = false"
+      @focus="focused = true"
+      @blur="focused = false">
       <div id="title" v-bind:style="titleStyle">
         <img id="logo" alt="Just Keep Brausen logo" src="../assets/justkeepbrausen.jpg">
         <h1>{{ msg }}</h1>
@@ -12,14 +14,17 @@
     </circ>
     <img class="gallery" v-for="src in content" 
       v-bind:key="src" 
+      v-bind:id="src"
       v-bind:src="`${publicPath}content/${src}`"
       v-bind:style="getImageStyle(content.indexOf(src))"
-      v-on:click="activeSrc = src"/>
+      v-on:click="changeImage(src)"/>
   </div>
 </template>
 
 <script lang="ts">
 import Vue, { VueConstructor } from 'vue';
+import { mapActions, mapState } from 'vuex'
+import { stateInterface } from '@/store'
 import circ from '@/components/circ.vue'
 
 interface Coordinate2D {
@@ -43,7 +48,6 @@ export default Vue.extend({
     circ
   },
   data: () => ({
-    activeSrc: null as number|null,
     rotation: 0,
     distance: 300,
     distanceDir: 10,
@@ -55,27 +59,36 @@ export default Vue.extend({
   computed: {
     viewportStyle: function() {
       const addUnit = (num: number) => `${num}px`
+      const isHotDog = this.activeImage && this.activeImage.isHotDog
       const style = {
         top: addUnit(this.center.y),
         left: addUnit(this.center.x),
-        background: this.activeSrc ? 
-          `no-repeat center url(${this.publicPath}content/${this.activeSrc})`:
+        background: this.activeImage ? 
+          `no-repeat center url(${this.publicPath}content/${this.activeImage.src})`:
           null,
-        backgroundSize: '800px'
+        backgroundSize: isHotDog ? 'auto 800px' : '800px',
       } as CSSStyleDeclaration
-      if (this.focused) {
-        style.borderRadius = '10px'
+      if (this.expanded) {
+        style.borderRadius = '10px',
+        style.width = isHotDog ? `${800 * this.activeImage.WHratio}px` : '800px',
+        style.height = isHotDog ? '800px' : `${800 / this.activeImage.WHratio}px`
       }
       
       return style
     },
     titleStyle: function() {
-      return this.focused ? {
+      return this.expanded ? {
         opacity: '0.0',
         visibility: 'hidden'
       } : {}
-    }
-  },
+    },
+    expanded: function() {
+      return this.focused ? !!this.activeImage : false
+    },
+    ...mapState([
+      'activeImage'
+    ]),
+  } as any,
   props: {
     msg: String,
   },
@@ -106,8 +119,19 @@ export default Vue.extend({
           rotate(${this.rotation + (2 * Math.PI * (index / this.content.length))}rad)
         `
       }
-    }
-  }
+    },
+    changeImage: function(src: string) {
+      const elem = document.getElementById(src) as HTMLImageElement
+      this.activateImage({
+        src,
+        isHotDog: elem.naturalWidth < elem.naturalHeight,
+        WHratio: elem.naturalWidth / elem.naturalHeight
+      })
+    },
+    ...mapActions([
+      'activateImage'
+    ])
+  } as any
 });
 </script>
 
@@ -130,7 +154,8 @@ export default Vue.extend({
   display flex
   align-items center
   justify-content center
-  background-color rgba(255,255,255, 0.7);
+  background rgba(255, 255, 255, 0.4)
+  backdrop-filter blur(10px)
   padding 10px
   border-radius 10px
   font-size 0.8rem

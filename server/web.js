@@ -2,7 +2,7 @@ const express = require("express");
 
 module.exports = {
     setupWebServer: function(expressApp) {
-        expressApp.use(express.static('client'));
+        expressApp.use(express.static('dist'));
     }
 }
 
