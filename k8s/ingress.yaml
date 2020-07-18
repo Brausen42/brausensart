@@ -4,7 +4,7 @@ metadata:
   name: brausensart-ingress
   annotations:  
     kubernetes.io/ingress.class: nginx
-    certmanager.k8s.io/cluster-issuer: letsencrypt-brausensart
+    cert-manager.io/cluster-issuer: letsencrypt-brausensart
 spec:
   tls:
   - hosts:

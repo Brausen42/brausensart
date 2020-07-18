@@ -1,6 +1,6 @@
 <template>
   <div>
-    <circ id="viewport" 
+    <Circle id="viewport" 
       v-bind:size="expanded ? 800 : 400" 
       v-bind:style="viewportStyle"
       @mouseenter.native="focused = true"
@@ -11,7 +11,7 @@
         <img id="logo" alt="Just Keep Brausen logo" src="../assets/justkeepbrausen.jpg">
         <h1>{{ msg }}</h1>
       </div>
-    </circ>
+    </Circle>
     <img class="gallery" v-for="src in content" 
       v-bind:key="src" 
       v-bind:id="src"
@@ -25,7 +25,7 @@
 import Vue, { VueConstructor } from 'vue';
 import { mapActions, mapState } from 'vuex'
 import { stateInterface } from '@/store'
-import circ from '@/components/circ.vue'
+import Circle from '@/components/circ.vue'
 
 interface Coordinate2D {
   x: number,
@@ -45,7 +45,7 @@ const getWindowDimensions = () => ({
 export default Vue.extend({
   name: 'Splash',
   components: {
-    circ
+    Circle
   },
   data: () => ({
     rotation: 0,
